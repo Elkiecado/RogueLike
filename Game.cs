@@ -44,24 +44,40 @@ namespace RogueSharp1
         private static RLConsole? inventoryConsole;
         
         public static DungeonMap? DungeonMap { get; private set; }
+        public static MessageUpdate MessageUpdate { get; private set; }
 
         public static Player? Player { get; set; }
         public static IRandom Random { get; private set; }
         public static void Main()
         {
             int seed  = (int) DateTime.UtcNow.Ticks;
+            //сид генерации
             Random = new DotNetRandom(seed);
+            //шрифт для графики
             string bitmapFile = "ascii_8x8.png";
+            //название
             string consoleTitle = $"RougeSharp  - Level - Seed {seed}";
+            //движения
             CommandSystem = new SystemOfCommands();
+            // главная консоль
             rootConsole = new RLRootConsole(bitmapFile, _screenWidth, _screenHeight, 8, 8, 1f, consoleTitle);
+            // карта
             mapConsole = new RLConsole(_mapWidth, _mapHeight);
+            // сообщения об изменениях
             newsFeedConsole = new RLConsole(_messageWidth, _messageHeight);
+            //статистика
             statConsole = new RLConsole(_statWidth, _statHeight);
+            //инвентарь
             inventoryConsole = new RLConsole(_inventoryWidth, _inventoryHeight);
+            //Генеравция карты
             MapGenerator mapGenerator = new MapGenerator(_mapWidth, _mapHeight, 20, 13 ,7);
             DungeonMap = mapGenerator.CreateMap();
             DungeonMap.UpdatePlayerFieldOfView();
+            //Создание области новостей
+            MessageUpdate = new MessageUpdate();
+            MessageUpdate.AddMessage("Arrived at first floor");
+            MessageUpdate.AddMessage($"Level created with seed {seed}");
+            //Обновление карты
             rootConsole.Render += rootConsole_Render;
             rootConsole.Update += rootConsole_Update;
             rootConsole.Run();
@@ -70,9 +86,6 @@ namespace RogueSharp1
 
         private static void rootConsole_Update(object sender, UpdateEventArgs e)
         {
-            mapConsole.SetBackColor(0, 0, _mapWidth, _mapHeight, RLColor.Black);
-            mapConsole.Print(1, 1, "Map", RLColor.White);
-
             newsFeedConsole.SetBackColor(0, 0, _messageWidth, _messageHeight, RLColor.Gray);
             newsFeedConsole.Print(1, 1, "Messages", RLColor.White);
 
@@ -121,6 +134,7 @@ namespace RogueSharp1
             if (_renderRequired)
             {
                 DungeonMap.Draw(mapConsole);
+                MessageUpdate.Draw(newsFeedConsole);
                 Player.Draw(mapConsole, DungeonMap);
 
                 RLConsole.Blit(mapConsole, 0, 0, _mapWidth, _mapHeight,

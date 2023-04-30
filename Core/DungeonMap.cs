@@ -85,9 +85,9 @@ namespace RogueSharp1.Core
         public void UpdatePlayerFieldOfView()
         {
             Player player = Game.Player;
-            // Compute the field-of-view based on the player's location and awareness
+            // Рассчёт поля зрения от положения и видимости
             ComputeFov(player.X, player.Y, player.Awaraness, true);
-            // Mark all cells in field-of-view as having been explored
+            // изученные клетки будут подсвечиваться
             foreach (Cell cell in GetAllCells())
             {
                 if (IsInFov(cell.X, cell.Y))

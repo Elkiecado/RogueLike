@@ -28,14 +28,14 @@ namespace RogueSharp1.Core
                 return;
             }
 
-            // Only draw the actor with the color and symbol when they are in field-of-view
+            // отрисовка только если в поле зрения
             if (map.IsInFov(X, Y))
             {
                 console.Set(X, Y, Color, Colors.FloorBackgroundFov, Symbol);
             }
             else
             {
-                // When not in field-of-view just draw a normal floor
+                // Не изученные клетки вне полезрения
                 console.Set(X, Y, Colors.Floor, Colors.FloorBackground, '.');
             }
         }
